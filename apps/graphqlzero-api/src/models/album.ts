@@ -9,7 +9,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
-import { debugLog } from "../util/debug";
+import { debugLog, enforcePageOptionsLimit } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -93,41 +93,41 @@ export async function fetchAlbumPhotos(
 export const resolvers = {
   Query: {
     async albums(_: undefined, args: object): Promise<Page<Album>> {
-      const { options } = args as { options?: PageQueryOptions };
-      debugLog("Fetching albums with options:", options);
+      const { options } = enforcePageOptionsLimit(args as { options?: PageQueryOptions });
+      debugLog("Fetching ALBUMs with options:", JSON.stringify(options));
       return fetchAlbums(options);
     },
     async album(_: undefined, args: object): Promise<Album> {
       const { id } = args as { id: string };
-      debugLog("Fetching album with id:", id);
+      debugLog("Fetching ALBUM with id:", id);
       return fetchAlbum(id);
     },
   },
   Mutation: {
     async createAlbum(_: undefined, args: object): Promise<Album> {
       const { input } = args as { input: CreateAlbumInput };
-      debugLog("Creating album with input:", input);
+      debugLog("Creating ALBUM with input:", input);
       return createAlbum(input);
     },
     async updateAlbum(_: undefined, args: object): Promise<Album> {
       const { id, input } = args as { id: string; input: UpdateAlbumInput };
-      debugLog("Updating album with id:", id, "and input:", input);
+      debugLog("Updating ALBUM with id:", id, "and input:", input);
       return updateAlbum(id, input);
     },
     async deleteAlbum(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
-      debugLog("Deleting album with id:", id);
+      debugLog("Deleting ALBUM with id:", id);
       return deleteAlbum(id);
     },
   },
   Album: {
     async user(album: Album): Promise<User> {
-      debugLog("Fetching user for album with id:", album.id);
+      debugLog("Fetching USER for ALBUM with id:", album.id);
       return fetchUser(album.userId);
     },
     async photos(album: Album, args: object): Promise<Page<Photo>> {
-      const { options } = args as { options?: PageQueryOptions };
-      debugLog("Fetching photos for album with id:", album.id, "and options:", options);
+      const { options } = enforcePageOptionsLimit(args as { options?: PageQueryOptions });
+      debugLog("Fetching PHOTOs for ALBUM with id:", album.id, "and options:", JSON.stringify(options));
       return fetchAlbumPhotos(album.id, options);
     },
   },

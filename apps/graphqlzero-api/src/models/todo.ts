@@ -8,7 +8,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
-import { debugLog } from "../util/debug";
+import { debugLog, enforcePageOptionsLimit } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -86,36 +86,36 @@ export async function deleteTodo(id: string): Promise<boolean> {
 export const resolvers = {
   Query: {
     async todos(_: undefined, args: object): Promise<Page<Todo>> {
-      const { options } = args as { options?: PageQueryOptions };
-      debugLog("Fetching todos with options:", options);
+      const { options } = enforcePageOptionsLimit(args as { options?: PageQueryOptions });
+      debugLog("Fetching TODOs with options:", JSON.stringify(options));
       return fetchTodos(options);
     },
     async todo(_: undefined, args: object): Promise<Todo> {
       const { id } = args as { id: string };
-      debugLog("Fetching todo with id:", id);
+      debugLog("Fetching TODO with id:", id);
       return fetchTodo(id);
     },
   },
   Mutation: {
     async createTodo(_: undefined, args: object): Promise<Todo> {
       const { input } = args as { input: CreateTodoInput };
-      debugLog("Creating todo with input:", input);
+      debugLog("Creating TODO with input:", input);
       return createTodo(input);
     },
     async updateTodo(_: undefined, args: object): Promise<Todo> {
       const { id, input } = args as { id: string; input: UpdateTodoInput };
-      debugLog("Updating todo with id:", id, "and input:", input);
+      debugLog("Updating TODO with id:", id, "and input:", input);
       return updateTodo(id, input);
     },
     async deleteTodo(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
-      debugLog("Deleting todo with id:", id);
+      debugLog("Deleting TODO with id:", id);
       return deleteTodo(id);
     },
   },
   Todo: {
     async user(todo: Todo): Promise<User> {
-      debugLog("Fetching user for todo with id:", todo.id);
+      debugLog("Fetching USER for TODO with id:", todo.id);
       return fetchUser(todo.userId);
     },
   },

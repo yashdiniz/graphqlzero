@@ -9,7 +9,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
-import { debugLog } from "../util/debug";
+import { debugLog, enforcePageOptionsLimit } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -95,41 +95,41 @@ export async function fetchPostComments(
 export const resolvers = {
   Query: {
     async posts(_: undefined, args: object): Promise<Page<Post>> {
-      const { options } = args as { options?: PageQueryOptions };
-      debugLog("Fetching posts with options:", options);
+      const { options } = enforcePageOptionsLimit(args as { options?: PageQueryOptions });
+      debugLog("Fetching POSTs with options:", JSON.stringify(options));
       return fetchPosts(options);
     },
     async post(_: undefined, args: object): Promise<Post> {
       const { id } = args as { id: string };
-      debugLog("Fetching post with id:", id);
+      debugLog("Fetching POST with id:", id);
       return fetchPost(id);
     },
   },
   Mutation: {
     async createPost(_: undefined, args: object): Promise<Post> {
       const { input } = args as { input: CreatePostInput };
-      debugLog("Creating post with input:", input);
+      debugLog("Creating POST with input:", input);
       return createPost(input);
     },
     async updatePost(_: undefined, args: object): Promise<Post> {
       const { id, input } = args as { id: string; input: UpdatePostInput };
-      debugLog("Updating post with id:", id, "and input:", input);
+      debugLog("Updating POST with id:", id, "and input:", input);
       return updatePost(id, input);
     },
     async deletePost(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
-      debugLog("Deleting post with id:", id);
+      debugLog("Deleting POST with id:", id);
       return deletePost(id);
     },
   },
   Post: {
     async user(post: Post): Promise<User> {
-      debugLog("Fetching user for post with id:", post.id);
+      debugLog("Fetching USER for POST with id:", post.id);
       return fetchUser(post.userId);
     },
     async comments(post: Post, args: object): Promise<Page<Comment>> {
-      const { options } = args as { options?: PageQueryOptions };
-      debugLog("Fetching comments for post with id:", post.id, "and options:", options);
+      const { options } = enforcePageOptionsLimit(args as { options?: PageQueryOptions });
+      debugLog("Fetching COMMENTs for POST with id:", post.id, "and options:", JSON.stringify(options));
       return fetchPostComments(post.id, options);
     },
   },
