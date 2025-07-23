@@ -17,3 +17,5 @@ functions:
 plugins:
   - serverless-webpack
   - serverless-offline
+build:
+  esbuild: false

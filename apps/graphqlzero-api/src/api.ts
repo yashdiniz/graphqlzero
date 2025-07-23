@@ -15,7 +15,7 @@ export const handler = startServerAndCreateLambdaHandler(
     plugins: [
       ApolloServerPluginLandingPageGraphQLPlayground({
         settings: {
-          "editor.theme": "light",
+          "editor.theme": "dark",
         },
       }) as unknown as ApolloServerPlugin<{}>,
     ],
