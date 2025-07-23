@@ -8,6 +8,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
+import { debugLog } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -86,29 +87,35 @@ export const resolvers = {
   Query: {
     async todos(_: undefined, args: object): Promise<Page<Todo>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching todos with options:", options);
       return fetchTodos(options);
     },
     async todo(_: undefined, args: object): Promise<Todo> {
       const { id } = args as { id: string };
+      debugLog("Fetching todo with id:", id);
       return fetchTodo(id);
     },
   },
   Mutation: {
     async createTodo(_: undefined, args: object): Promise<Todo> {
       const { input } = args as { input: CreateTodoInput };
+      debugLog("Creating todo with input:", input);
       return createTodo(input);
     },
     async updateTodo(_: undefined, args: object): Promise<Todo> {
       const { id, input } = args as { id: string; input: UpdateTodoInput };
+      debugLog("Updating todo with id:", id, "and input:", input);
       return updateTodo(id, input);
     },
     async deleteTodo(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
+      debugLog("Deleting todo with id:", id);
       return deleteTodo(id);
     },
   },
   Todo: {
     async user(todo: Todo): Promise<User> {
+      debugLog("Fetching user for todo with id:", todo.id);
       return fetchUser(todo.userId);
     },
   },

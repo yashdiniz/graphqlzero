@@ -10,6 +10,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
+import { debugLog } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -197,38 +198,46 @@ export const resolvers = {
   Query: {
     async users(_: undefined, args: object): Promise<Page<User>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching users with options:", options);
       return fetchUsers(options);
     },
     async user(_: undefined, args: object): Promise<User> {
       const { id } = args as { id: string };
+      debugLog("Fetching user with id:", id);
       return fetchUser(id);
     },
   },
   Mutation: {
     async createUser(_: undefined, args: object): Promise<User> {
       const { input } = args as { input: CreateUserInput };
+      debugLog("Creating user with input:", input);
       return createUser(input);
     },
     async updateUser(_: undefined, args: object): Promise<User> {
       const { id, input } = args as { id: string; input: UpdateUserInput };
+      debugLog("Updating user with id:", id, "and input:", input);
       return updateUser(id, input);
     },
     async deleteUser(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
+      debugLog("Deleting user with id:", id);
       return deleteUser(id);
     },
   },
   User: {
     async posts(user: User, args: object): Promise<Page<Post>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching posts for user with id:", user.id, "and options:", options);
       return fetchUserPosts(user.id, options);
     },
     async albums(user: User, args: object): Promise<Page<Album>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching albums for user with id:", user.id, "and options:", options);
       return fetchUserAlbums(user.id, options);
     },
     async todos(user: User, args: object): Promise<Page<Todo>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching todos for user with id:", user.id, "and options:", options);
       return fetchUserTodos(user.id, options);
     },
   },

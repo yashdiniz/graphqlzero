@@ -9,6 +9,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
+import { debugLog } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -93,33 +94,40 @@ export const resolvers = {
   Query: {
     async albums(_: undefined, args: object): Promise<Page<Album>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching albums with options:", options);
       return fetchAlbums(options);
     },
     async album(_: undefined, args: object): Promise<Album> {
       const { id } = args as { id: string };
+      debugLog("Fetching album with id:", id);
       return fetchAlbum(id);
     },
   },
   Mutation: {
     async createAlbum(_: undefined, args: object): Promise<Album> {
       const { input } = args as { input: CreateAlbumInput };
+      debugLog("Creating album with input:", input);
       return createAlbum(input);
     },
     async updateAlbum(_: undefined, args: object): Promise<Album> {
       const { id, input } = args as { id: string; input: UpdateAlbumInput };
+      debugLog("Updating album with id:", id, "and input:", input);
       return updateAlbum(id, input);
     },
     async deleteAlbum(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
+      debugLog("Deleting album with id:", id);
       return deleteAlbum(id);
     },
   },
   Album: {
     async user(album: Album): Promise<User> {
+      debugLog("Fetching user for album with id:", album.id);
       return fetchUser(album.userId);
     },
     async photos(album: Album, args: object): Promise<Page<Photo>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching photos for album with id:", album.id, "and options:", options);
       return fetchAlbumPhotos(album.id, options);
     },
   },

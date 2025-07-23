@@ -8,6 +8,7 @@ import {
   fetchResource,
   updateResource,
 } from "../util/json-placeholder";
+import { debugLog } from "../util/debug";
 
 export const typeDefs = gql`
   extend type Query {
@@ -94,29 +95,35 @@ export const resolvers = {
   Query: {
     async comments(_: undefined, args: object): Promise<Page<Comment>> {
       const { options } = args as { options?: PageQueryOptions };
+      debugLog("Fetching comments with options:", options);
       return fetchComments(options);
     },
     async comment(_: undefined, args: object): Promise<Comment> {
       const { id } = args as { id: string };
+      debugLog("Fetching comment with id:", id);
       return fetchComment(id);
     },
   },
   Mutation: {
     async createComment(_: undefined, args: object): Promise<Comment> {
       const { input } = args as { input: CreateCommentInput };
+      debugLog("Creating comment with input:", input);
       return createComment(input);
     },
     async updateComment(_: undefined, args: object): Promise<Comment> {
       const { id, input } = args as { id: string; input: UpdateCommentInput };
+      debugLog("Updating comment with id:", id, "and input:", input);
       return updateComment(id, input);
     },
     async deleteComment(_: undefined, args: object): Promise<boolean> {
       const { id } = args as { id: string };
+      debugLog("Deleting comment with id:", id);
       return deleteComment(id);
     },
   },
   Comment: {
     async post(comment: Comment): Promise<Post> {
+      debugLog("Fetching post for comment with id:", comment.id);
       return fetchPost(comment.postId);
     },
   },
