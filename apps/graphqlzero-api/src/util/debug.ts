@@ -10,11 +10,13 @@ export function debugLog(...args: any[]) {
     }
 }
 
-const MAX_PAGE_LIMIT = 100;
+const MAX_PAGE_LIMIT = 200;
 export function enforcePageOptionsLimit({ options }: { options?: PageQueryOptions }) {
     let limit = options?.paginate?.limit || MAX_PAGE_LIMIT;
     if (options?.paginate?.limit && options.paginate.limit > MAX_PAGE_LIMIT) {
         limit = MAX_PAGE_LIMIT;
+    } else if (options?.paginate?.limit && options.paginate.limit < 1) {
+        limit = 1;
     }
     return {
         options: {
